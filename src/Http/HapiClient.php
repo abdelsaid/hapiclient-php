@@ -46,7 +46,7 @@ final class HapiClient implements HapiClientInterface
         if ($this->apiUrl) {
             $baseUrl = rtrim($this->apiUrl, '/') . '/';
             
-            if (Misc::isGuzzle6()) {
+            if (Misc::getGuzzleVersion() > 5) {
                 $this->client = new Client(['base_uri' => $baseUrl]);
             } else {
                 $this->client = new Client(['base_url' => $baseUrl]);
@@ -110,7 +110,7 @@ final class HapiClient implements HapiClientInterface
     {
         // Options (Guzzle 6+)
         $options = [];
-        if (Misc::isGuzzle6()) {
+        if (Misc::getGuzzleVersion() > 5) {
             $options['exceptions'] = false;
             
             if (($verify = Misc::verify($request->getUrl(), __DIR__ . '/../CA/')) !== null) {
@@ -244,7 +244,15 @@ final class HapiClient implements HapiClientInterface
         }
         
         // Prepare the Guzzle request
-        if (Misc::isGuzzle6()) {
+        if (Misc::getGuzzleVersion() === 7) {
+            // Guzzle 7
+            $httpRequest = new \GuzzleHttp\Psr7\Request(
+                $request->getMethod(),
+                $url,
+                array_merge($headers, $headersToAdd),
+                $body ? \GuzzleHttp\Psr7\Utils::streamFor($body) : null
+            );
+        } elseif (Misc::getGuzzleVersion() === 6) {
             // Guzzle 6
             $httpRequest = new \GuzzleHttp\Psr7\Request(
                 $request->getMethod(),
