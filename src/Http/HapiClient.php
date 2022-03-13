@@ -1,4 +1,5 @@
 <?php
+
 namespace HapiClient\Http;
 
 use HapiClient\Http\Auth\AuthenticationMethod;
