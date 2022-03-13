@@ -28,13 +28,40 @@ class Misc
         
         return $array;
     }
-    
+
     /**
      * Use this to adapt Guzzle Client calls.
      */
-    public static function isGuzzle6()
+    public static function getGuzzleVersion()
     {
-        return class_exists('\GuzzleHttp\Psr7\Request');
+        $projectDir = dirname(
+            __DIR__
+            . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR
+        );
+        if (is_file($projectDir)) {
+            $projectDir = \dirname($projectDir);
+        }
+
+        $composerFile = $projectDir . DIRECTORY_SEPARATOR . 'composer.json';
+        $guzzleVersion = (is_file($composerFile) ? json_decode(file_get_contents($composerFile), true) : [])['require']['guzzlehttp/guzzle'] ?? '';
+        if (empty($guzzleVersion)) {
+            throw new \Exception('For better version detection, please add your guzzle vendor to the composer.json, you can exceute composer require guzzlehttp/guzzle', '0');
+        }
+
+        $guzzleVersion = explode('.', $guzzleVersion);
+        $majorVersion = array_shift($guzzleVersion);
+        if (is_numeric($majorVersion)) {
+            return (int)$majorVersion;
+        } elseif (is_string($majorVersion)) {
+            $version = preg_replace('/[^0-9]/', '', $majorVersion);
+
+            return (int)$version;
+        }
+
+        return 0;
     }
     
     /**
