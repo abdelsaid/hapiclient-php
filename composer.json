@@ -1,5 +1,5 @@
 {
-    "name": "ohmEnergySlimpay/hapiclient",
+    "name": "ohmenergyelimpay/hapiclient",
     "description": "An HTTP Client using HAL as the format for resources.",
     "keywords": ["http", "hal", "rest", "client", "HTTP client", "HAL client", "hapi", "hateoas"],
     "license": "MIT",
